@@ -12,7 +12,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+FROM golang as builder
+COPY . /mnt
+WORKDIR /mnt
+RUN make build
+
 FROM alpine:3.12
 RUN apk update --no-cache && apk add ca-certificates
-COPY nfs-subdir-external-provisioner /nfs-subdir-external-provisioner
+COPY --from=builder /mnt/docker/x86_64/nfs-subdir-external-provisioner /nfs-subdir-external-provisioner
 ENTRYPOINT ["/nfs-subdir-external-provisioner"]
